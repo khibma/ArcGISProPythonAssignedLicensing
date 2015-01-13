@@ -1,11 +1,32 @@
 # ArcGISProPythonAssignedLicensing
-The Python scripts here demonstrate how to create users and assign ArcGIS Pro permissions. These scripts offer an alternative to the web ArcGIS.com interface of assigning permissions. In addition to licenses administration, you can also get back basic informaiton about your organization in ArcGIS.com, query license counts, delete user accounts and generate accounts in batch using a CSV file.
+The Python scripts here demonstrate how to create users and assign ArcGIS Pro permissions. These scripts offer an alternative to the web ArcGIS.com interface of assigning permissions. In addition to licenses administration, you can also get back basic informaiton about your organization in ArcGIS.com, query license counts, delete user accounts and generate accounts in batch using a CSV file. 
 
-Note - If you have a small organization, or only need to assign a few licenses, downloading and working with these scripts will NOT be faster than using the web interface. These scripts will provide the most benefit to organizations that need to assign a large number of licenses or to individuals who are more comfortable working with command line/scripting than a web UI.
+These scripts *will* work with a local portal deployment (10.3). They provide some useful functions for querying and adding enterprise users from your LDAP or Windows store.
 
-The ProLicense.py has all the functions and calls to create users and assign licenses.
-The ProAdminDemo.py file demonstrates on a singular basis how to call and use the functions after the ARCGIScom object has been created.
-The ProCommandLine.py file is meant to provide a command line (DOS-esq) like experience to assign licenses and query the portal. A numeric menu allows different functions to be called to interact with the portal.
+**Note** - If you have a small organization, or only need to assign a few licenses, downloading and working with these scripts will NOT be faster than using the web interface. These scripts will provide the most benefit to organizations that need to assign a large number of licenses or to individuals who are more comfortable working with command line/scripting than a web UI.
+
+The **ProLicense.py** has all the functions and calls to create users and assign licenses.
+The **ProAdminDemo.py** file demonstrates on a singular basis how to call and use the functions after the ARCGIScom object has been created.
+The **ProCommandLine.py** file is meant to provide a command line (DOS-esq) like experience to assign licenses and query the portal. A numeric menu allows different functions to be called to interact with the portal.
+
+## Instructions
+1. Download the Python files. Use the [Download Zip](https://github.com/khibma/ArcGISProPythonAssignedLicensing/archive/master.zip) to download all files
+2. Run either the Demo or Admin code:
+⋅⋅*>>C:\Python34\python.exe c:\codeDownloaded\ProCommandLine.py
+⋅⋅*>>C:\Python34\python.exe c:\codeDownloaded\ProAdminDemo.py
+```
+     1 - Get Portal info
+     2 - Show license counts
+     3 - Show used licenses
+     4 - Create and Invite user
+     5 - Add users from CSV file
+     6 - Modify user account (Add/Change/Revoke a license)
+     if LocalPortal:
+         7 - Manage enterprise users (Local Portals only)
+     U - Utilities: csv creation
+     R - Refresh token and user references
+```
+
 
 ## Requirements
 
