@@ -3,7 +3,7 @@ The Python scripts here demonstrate how to create users and assign ArcGIS Pro pe
 
 These scripts *will* work with a local portal deployment (10.3). They provide some useful functions for querying and adding enterprise users from your LDAP or Windows store.
 
-**Note - __If you have a small organization, or only need to assign a few licenses, downloading and working with these scripts will NOT be faster than using the web interface. These scripts will provide the most benefit to organizations that need to assign a large number of licenses or to individuals who are more comfortable working with command line/scripting than a web UI.__*
+**Note - _If you have a small organization, or only need to assign a few licenses, downloading and working with these scripts will NOT be faster than using the web interface. These scripts will provide the most benefit to organizations that need to assign a large number of licenses or to individuals who are more comfortable working with command line/scripting than a web UI_**.
 
 The **ProLicense.py** has all the functions and calls to create users and assign licenses.
 
