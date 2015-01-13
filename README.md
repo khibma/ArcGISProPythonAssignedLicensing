@@ -1,7 +1,9 @@
 # ArcGISProPythonAssignedLicensing
-The Python scripts here demonstrate how to create users and assign ArcGIS Pro permissions. These scripts offer an alternative to the web ArcGIS.com interface for assigning permissions. In addition to licenses administration, you can also get basic informaiton about your organization in ArcGIS.com, query license counts, delete user accounts and generate accounts in batch using a CSV file. 
+These Python scripts demonstrate how to create users and assign ArcGIS Pro permissions. These scripts offer an alternative to the web ArcGIS.com interface for assigning permissions, specifically they are designed to simplify the administrative of licensing and permissions for large organizations.
 
-These scripts *will* work with a local portal deployment (10.3). They provide some useful functions for querying and adding enterprise users from your LDAP or Windows store.
+In addition to licenses administration, you can get basic information about your organization in ArcGIS.com, query license counts, delete user accounts and generate accounts in batch using a CSV file. 
+
+These scripts *will* work with a local Portal for ArcGIS 10.3. They provide some useful functions for querying and adding enterprise users from your LDAP or Windows store. (Some of the user administrative functions provided here will overlap with the [PortalPy](https://github.com/Esri/portalpy) scripts.)
 
 **Note - _If you have a small organization, or only need to assign a few licenses, downloading and working with these scripts will NOT be faster than using the web interface. These scripts will provide the most benefit to organizations that need to assign a large number of licenses or to individuals who are more comfortable working with command line/scripting than a web UI_**.
 
@@ -32,9 +34,9 @@ The **ProCommandLine.py** file is meant to provide a command line (DOS-esq) like
 ![alt tag](https://cloud.githubusercontent.com/assets/2514926/5730877/08c1f702-9b4c-11e4-97eb-91ac5bcfca42.jpg)
 ![alt tag](https://cloud.githubusercontent.com/assets/2514926/5730878/09de5306-9b4c-11e4-80ed-492ec0e28058.jpg)
 ## Requirements
-
+* ArcGIS for Organization (to be acted against with a named, administrative user) or Portal for ArcGIS
 * Python 3.4+
-* No ArcGIS products are required
+* No ArcGIS software products are required to use these scripts
 * This will NOT work with Python 2.x
 
 ## Issues
@@ -42,9 +44,9 @@ The **ProCommandLine.py** file is meant to provide a command line (DOS-esq) like
 Find a bug or want to request a new feature?  Please let us know by submitting an issue.
 
 ##Possible enhancements and areas to improve on
--Better local portal support, or possibly a split of code for ArcGIS.com and LocalPortal specific scripts
--UNIT tests
--WebPage UI (flask?) that could be hosted inside your organization that displays to all users who has a license checked out and/or what extensions are in use. Self-serve section to request a new account/license
+* Better local portal support, or possibly a split of code for ArcGIS.com and LocalPortal specific scripts
+* UNIT tests
+* WebPage UI (flask?) that could be hosted inside your organization that displays to all users who has a license checked out and/or what extensions are in use. Self-serve section to request a new account/license
 
 ## Licensing
 Copyright 2015 Esri
