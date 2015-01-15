@@ -393,14 +393,12 @@ class ARCGIScom(object):
             if create:
                 newUserDict['invitationList']['invitations'][0]['password'] = userPayload[i]['Password']
                 newUserDict['subject'] = "Some place holder text."
-                
-        
-            print("\nCreating a user, this may take a few seconds....\n ")
+            
             inviteRes = sendReq(URL, newUserDict)       
-            if 'success' in inviteRes:    #{'notInvited': ['khibma'], 'success': True}
+            if 'success' in inviteRes:    
                 if inviteRes['success'] == True:
-                    print("{0} was added".format(userPayload[i]['Username']))
-                    newUsers.append(userPayload[i]['Username'])
+                    if inviteRes['notInvited']: pass
+                    else: newUsers.append(userPayload[i]['Username'])
             else:
                 print(inviteRes)    
         
