@@ -13,11 +13,14 @@ The **ProAdminDemo.py** file demonstrates on a singular basis how to call and us
 
 The **ProCommandLine.py** file is meant to provide a command line (DOS-esq) like experience to assign licenses and query the portal. A numeric menu allows different functions to be called to interact with the portal.
 
+The **_something.py** files are specific examples on how to perform one task, such as using a CSV file to create user accounts. Use these files if you have no desire to enhance or modify the code as you only want to perform a specific action.
+
 ## Instructions
 1. Download the Python files. Use the [Download Zip](https://github.com/khibma/ArcGISProPythonAssignedLicensing/archive/master.zip) to download all files
-2. Run either the Demo or Admin code:
+2. Run either the applicable script, such as Demo, Admin or specific example:
   * >>C:\Python34\python.exe c:\codeDownloaded\ProCommandLine.py
   * >>C:\Python34\python.exe c:\codeDownloaded\ProAdminDemo.py
+  * >>C:\Python34\python.exe c:\codeDownloaded\_CreateUsersFromCSV.py
 
 ```
      1 - Get Portal info
