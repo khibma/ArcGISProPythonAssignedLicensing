@@ -149,6 +149,8 @@ class ARCGIScom(object):
         totalUsers = 1
         start = 1
         self.AllUser = {'users':[]}
+        allURL = self.ORGURL + '/portals/self/users'   
+        
         while (userCnt < totalUsers) or (start != -1):
             
             allUsersDict = {'start' : start,
@@ -156,9 +158,6 @@ class ARCGIScom(object):
                             'num' : 20,
                             'token': self.token,
                             'f' :'json' }
-            
-            #allURL = self.PortalURL + '/sharing/rest/portals/self/users'
-            allURL = self.ORGURL + '/portals/self/users'   
                     
             userResp = sendReq(allURL, allUsersDict)   
             
@@ -393,12 +392,14 @@ class ARCGIScom(object):
             if create:
                 newUserDict['invitationList']['invitations'][0]['password'] = userPayload[i]['Password']
                 newUserDict['subject'] = "Some place holder text."
-            
+                
+        
             inviteRes = sendReq(URL, newUserDict)       
             if 'success' in inviteRes:    
                 if inviteRes['success'] == True:
                     if inviteRes['notInvited']: pass
-                    else: newUsers.append(userPayload[i]['Username'])
+                    else:                        
+                        newUsers.append(userPayload[i]['Username'])
             else:
                 print(inviteRes)    
         
@@ -433,6 +434,75 @@ class ARCGIScom(object):
         assignPermRes = sendReq(URL, permissionDict)          
         
         return assignPermRes
+    
+    
+    def createGroup(self, title, description, snippet, tags):
+        '''Create an inivte only group inside ArcGIS.com. This group creation is designed to help manage accounts for license
+           management. Groups can be manually modified after creation to perform other functions.
+           '''
+        
+        URL = self.ORGURL + "/community/createGroup"
+        
+        createDict = {'token': self.token,
+                      'f' :'json',
+                      'title': title,
+                      'access': 'org',
+                      'description': description,
+                      'snippet': snippet,
+                      'tags': tags,
+                      'isViewOnly': 'true',
+                      'isInvitationOnly': 'true',
+                      'sortField': 'avgrating',
+                      'sortOrder': 'desc'                                     
+                      }              
+        
+        createGroupRes = sendReq(URL, createDict)          
+        
+        return createGroupRes    
+    
+
+    def searchGroups(self):
+        '''Find all groups matching a criteria. Function will continue to loop and return all groups as JSON, thus this
+           function only needs to be called once.
+        '''
+        
+        URL = self.ORGURL + "/community/groups"
+        
+        start = 1
+        groups = []        
+        
+        while start >=1:
+            searchDict = {'token': self.token,
+                          'f':'json',                          
+                          'q': 'orgid:' + self.orgID,
+                          'start': start,
+                          'num': 50,
+                          'sortField': 'title'                          
+                          }
+            
+            createGroupRes = sendReq(URL, searchDict)    
+            start = createGroupRes['nextStart']
+            groups += createGroupRes['results']
+        
+        return groups  
+  
+
+    def addUserToGroup(self, groupID, users):
+        '''Assign 1 or more users to an existing group.'''
+        
+        URL = self.ORGURL + "/community/groups/{0}/addUsers".format(groupID)
+        
+        if type(users) == list:
+            users = ','.join(users)
+        
+        addUsersDict = {'token': self.token,
+                      'f':'json', 
+                      'users': users                       
+                      }
+        
+        addedUserResp = sendReq(URL, addUsersDict)          
+        
+        return addedUserResp
     
     #### //END ArcGIS.com Portal functions - ####    
  
