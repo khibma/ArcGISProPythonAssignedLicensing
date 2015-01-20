@@ -19,8 +19,9 @@ def Menu():
     print(" 4 - Create and Invite user")
     print(" 5 - Add users from CSV file")
     print(" 6 - Modify user account (Add/Change/Revoke a license)")
+    print(" 7 - Group management (search/create)")
     if CON.LocalPortal:
-        print(" 7 - Manage enterprise users (Local Portals only)")
+        print(" 8 - Manage enterprise users (Local Portals only)")
     print(" U - Utilities: csv creation")
     print(" R - Refresh token and user references")    
     print(" q - quit")
@@ -36,7 +37,13 @@ def subMenu_Utilities():
     print(" 0 - return")    
     print(" 1 - Create template CSV file")
     print(" 2 - Export users to CSV file")
-    
+
+def subMenu_Groups():
+    print(" =Group Management= \n")
+    print(" 0 - return")    
+    print(" 1 - List groups")
+    print(" 2 - Create Group")    
+
 def subMenu_EnterpriseUsers():
     print(" =Local portal utilities= \n")
     print(" 0 - return")    
@@ -237,42 +244,61 @@ def addUserFromCSV(CON):
        
     csvFile = input("Enter path to CSV file:  ")   
     userPayload = pro.readUserCSV(csvFile)
-    if userPayload == None:
+    if (userPayload == None) or (not userPayload):
         print("No users to load from CSV file.")
         return 0  
     
     #Check each username in the CSV. If it cant be used, remove it from the payload.
     for i in range(0, len(userPayload)):
         checkedUser = CON.checkUser(userPayload[i]['Username']) 
-        if checkedUser != ckUser:
+        if checkedUser != userPayload[i]['Username']:
             userPayload.pop(i)            
-
+    if not userPayload:
+        print("No names inside the CSV can be used")
+    
     userList = CON.createUser(userPayload)
 
-    
-    if "License" in userPayload[0]:
-        print("Please wait a second while user accounts are created before permissions can be assigned")
-        time.sleep(2)  #time.sleep(len(userPayload)+1)
-        
-        for i in range(0, len(userPayload)):
-            workingUser = userPayload[i]['Username']            
-            permResp = CON.assignProPermissions(workingUser, [userPayload[i]['License']]) 
-            if "success" in permResp:
-                print("{0} assigned licenses: {1}".format(workingUser, userPayload[i]['License']))
-            else:
-                print("FAILED to assign {0} to {1}".format(userPayload[i]['License'], workingUser))                    
-                print(permResp)
-        
-        return 0 #Done, return
-    
     if len(userList) > 0:
         while True:
-            assign = input("Do you want to assign new users a license now? [y|n]  ")
-            if assign.lower() == 'y' or assign.lower == 'n': break
+            groupAssign = input("Do you want to assign new users to a group? [y|n]  ")
+            if groupAssign.lower() == 'y' or groupAssign.lower() == 'n': break
         
-        if assign == "y":
-            for user in userList:
-                changeLicense(CON, userList)  
+        if groupAssign.lower() == 'y':
+            while True:
+                cGroupChoice = input("Add user to an [E]xisting or [N]ew group?  ")
+                if cGroupChoice.lower() == 'e' or cGroupChoice.lower() == 'n': break
+            if cGroupChoice.lower() == 'e':
+                groupID = listGroupsUI(CON, False)
+            else:
+                groupID = createGroupUI(CON, False)
+            addedUserResp = CON.addUserToGroup(groupID, userList)
+            
+            for user in addedUserResp['notAdded']:
+                print("{0} was not added to the group. Investigate this user manually.".format(user))
+
+    
+        if "License" in userPayload[0]:
+            print("\nPlease wait a second while user accounts are created before permissions can be assigned")
+            time.sleep(2)
+            
+            for i in range(0, len(userPayload)):
+                workingUser = userPayload[i]['Username']            
+                permResp = CON.assignProPermissions(workingUser, userPayload[i]['License'].split(',')) 
+                if "success" in permResp:
+                    print("{0} assigned licenses: {1}".format(workingUser, userPayload[i]['License']))
+                else:
+                    print("FAILED to assign {0} to {1}".format(userPayload[i]['License'], workingUser))                    
+                    print(permResp)        
+       
+        else:       
+            while True:
+                assign = input("Do you want to assign new users a license now? [y|n]  ")
+                if assign.lower() == 'y' or assign.lower == 'n': break
+            
+            if assign == "y":
+                for user in userList:
+                    changeLicense(CON, userList)  
+            
     
     refreshUI(CON, False) #Update as new users added 
     return 0
@@ -451,7 +477,47 @@ def AddEUserToPortal(CON):
             
         refreshUI(CON, False)
     return 0
+
+def listGroupsUI(CON, mainMenuCalled=True): 
     
+    groups = CON.searchGroups()
+    
+    if groups == []:
+        print("No groups found")
+    else:
+        print("\n{0:3}|{1:31}|{2:16}|{3}  ".format("ID#", "Title", "Owner", "Created on"))
+        print("----------------------------------------------------------------------------------")
+        for i, group in enumerate(groups):
+            print("{0:3}| {1:30}| {2:15}| {3}".format(i, group['title'], group['owner'], pro.convertTime(group['created'], False) ))
+        
+        if not mainMenuCalled:    
+            cGroupNum = input("\n   Select a group number:  ")
+            return groups[int(cGroupNum)]['id']
+    
+    input("\nPress enter to continue.")  
+    return 0
+
+def createGroupUI(CON, mainMenuCalled=True):
+    
+    cGroupName = input("\n   Enter a group name (title):  ")
+    if cGroupName == '': return 0
+    cGroupDesc = input("   Enter a group description:  ")
+    cGroupSnippet = input("   Enter a group snippet:  ")
+    cGroupTags = input("   Enter group tags:  ")
+    
+    groupCreateResp = CON.createGroup(cGroupName, cGroupDesc, cGroupSnippet, cGroupTags)
+    
+    if 'success' in groupCreateResp:
+        if groupCreateResp['success'] == True:
+            print("Created group {0}".format(groupCreateResp['group']['title']))
+            if not mainMenuCalled:
+                return groupCreateResp['group']['id']
+    else:
+        print("Group might not be created, see message:")
+        print(groupCreateResp)
+    
+    input("Press enter to continue.")
+    return 0    
 
 def releaseLicenseUI(CON, user=None):
     
@@ -486,7 +552,7 @@ def createCSVUI():
     
     password = ''
     while password.lower() not in ['y', 'n']:
-        password = input("Put Password header in the CSV file? \nPasswords will make accounts. No passwords will invite users[y|n]  ")          
+        password = input("Passwords will make accounts. No passwords will invite users.\nPut Password header in the CSV file? [y|n]  ")          
     
     success = pro.createCSV(location, password)
     if success != 0:
@@ -523,7 +589,7 @@ def refreshUI(CON, token=False):
     CON.UserInfo, CON.AllUser = CON.getUserLicenseInfo()
     CON.AllUserCount = len(CON.AllUser['users'])
     CON.setLicenseCounts()
-    print("Token and ORG info updated")
+    print("\n  ##Token and ORG info updated##  ")
     
     return
 
@@ -539,7 +605,7 @@ if __name__ == "__main__":
     
     print("\nConnect to ArcGIS.com or a local portal. For a local portal, use the full portalAdmin URL with port.")
     print("     Eg. https://server.domain.com:7443/arcgis/sharing/rest")
-    orgURL = input("Org URL, or accept default [{0}]:  ".format(hardOrg))
+    orgURL = input("\nEnter Org URL, or accept default [{0}]:  ".format(hardOrg))
     if orgURL == None or orgURL == "":
         orgURL = hardOrg
     
@@ -588,8 +654,18 @@ if __name__ == "__main__":
                 if subSelection == "2": subSelection = deleteUserUI(CON, None)  # Delete user account
                 if subSelection == "0" or subSelection =='': break  # 0-return            
             selection = SelectTxt(CON)            
-                
-        elif selection == "7":   # Manage enterprise users
+        
+        elif selection == "7":   # Group management
+            while True:           
+                Clear()    
+                subMenu_Groups()
+                subSelection = SelectTxt(CON)                
+                if subSelection == "1": subSelection = listGroupsUI(CON, True) # List groups
+                if subSelection == "2": subSelection = createGroupUI(CON, True)  # Create group
+                if subSelection == "0" or subSelection =='': break  # 0-return            
+            selection = SelectTxt(CON)   
+            
+        elif selection == "8":   # Manage enterprise users
             if not CON.LocalPortal:
                 selection = SelectTxt(CON)
             else:
