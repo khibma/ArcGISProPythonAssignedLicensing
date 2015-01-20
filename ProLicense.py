@@ -168,6 +168,7 @@ class ARCGIScom(object):
             self.AllUser['users'] += userResp['users']   
             
         #Mash the 2 dicts together
+        reset = True
         for i, allUsersVal in enumerate(self.AllUser['users']):
             user = ''
             for j, entitledUsersVal in enumerate(self.LicensedUser['userEntitlements']): 
