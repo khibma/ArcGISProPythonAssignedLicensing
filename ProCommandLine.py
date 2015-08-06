@@ -246,16 +246,21 @@ def addUserFromCSV(CON):
     userPayload = pro.readUserCSV(csvFile)
     if (userPayload == None) or (not userPayload):
         print("No users to load from CSV file.")
-        return 0  
+        return 0
     
     #Check each username in the CSV. If it cant be used, remove it from the payload.
     for i in range(0, len(userPayload)):
         checkedUser = CON.checkUser(userPayload[i]['Username']) 
         if checkedUser != userPayload[i]['Username']:
-            userPayload.pop(i)            
+            userPayload.pop(i)
+        if "Password" in userPayload[i]:
+            if len(userPayload[i]['Password']) < 8:
+                print("Password for user {0} is less than 8 chars, skipping.".format(userPayload[i]['Username']))
+                userPayload.pop(i)
     if not userPayload:
         print("No names inside the CSV can be used")
-    
+        return 0
+
     userList = CON.createUser(userPayload)
 
     if len(userList) > 0:

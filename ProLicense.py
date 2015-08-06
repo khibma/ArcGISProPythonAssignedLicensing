@@ -364,7 +364,7 @@ class ARCGIScom(object):
         URL = self.ORGURL + "/portals/self/invite"
         
         newUsers = []    
-        for i in range(0, len(userPayload)): 
+        for i in range(0, len(userPayload)):
         
             newUserDict = {'token': self.token,
                               'f' :'json',
@@ -387,15 +387,18 @@ class ARCGIScom(object):
                               screenshot.</p><p>For your reference, you can access the home page of the organization here: \
                               <br>{4}</p><p>This link will expire in two weeks.</p><p style="color:gray;">\
                               This is an automated email, please do not reply.</p></body></html>'.format(self.OrgTitle, self.adminFName, self.adminLName, self.adminEmail, self.PortalURL)
-                              } 
+                              }
             
             #If a password exists, we're creating users, not inviting them: add password into the payload.
             if create:
-                newUserDict['invitationList']['invitations'][0]['password'] = userPayload[i]['Password']
-                newUserDict['subject'] = "Some place holder text."
-                
+                password = userPayload[i]['Password']
+                if len(password) < 8:
+                    print("Password must be at least 8 characters. User: {0} not created".format(userPayload[i]['Username']))
+                    continue
+                newUserDict['invitationList']['invitations'][i]['password'] = password
+                newUserDict['subject'] = "Some place holder text."                  
         
-            inviteRes = sendReq(URL, newUserDict)       
+            inviteRes = sendReq(URL, newUserDict)                   
             if 'success' in inviteRes:    
                 if inviteRes['success'] == True:
                     if inviteRes['notInvited']: pass
