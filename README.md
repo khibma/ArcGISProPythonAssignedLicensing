@@ -38,9 +38,8 @@ The **_something.py** files are specific examples on how to perform one task, su
 ![alt tag](https://cloud.githubusercontent.com/assets/2514926/5730878/09de5306-9b4c-11e4-80ed-492ec0e28058.jpg)
 ## Requirements
 * ArcGIS for Organization (to be acted against with a named, administrative user) or Portal for ArcGIS
-* Python 3.4+
+* Python 2.7 or 3.4+
 * No ArcGIS software products are required to use these scripts
-* This will NOT work with Python 2.x
 
 ## Issues
 
